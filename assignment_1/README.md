@@ -1,6 +1,7 @@
 # Assignment 1
 
 Problem 1
+
 (a) 
 - When the light is initially off, the prisoners select 1 prisoner to be the "counter"
 - When other prisoners go in, if the light is off and that prisoner has never turned it on, the prisoner turns the switch on. If the switch is already on, the prisoners do nothing
@@ -12,3 +13,8 @@ Problem 1
 - When other prisoners go in, if the switch is off, they can turn it on their first 2 times.
 - The counter again will be the only person to turn off the switch, and will add 1 to their counter each time they do so, except for the first time, when they will not add 1
 - When the count reaches 197, the counter can declare that all prisoners have visited the room
+
+
+Problem 2
+
+
