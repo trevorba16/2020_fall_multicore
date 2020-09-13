@@ -41,7 +41,7 @@ for (int i = 1; i < N; i++)
 	if (number[i] <= l) return;    
 
 exit protocol  gate[i] = 0;  
-               number[i] = 0;  
+               number[i] = 0;
 
 
 
