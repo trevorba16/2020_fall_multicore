@@ -36,7 +36,7 @@ for (int i = 1; i < N; i++)
 		last[k]= i;  
 		for (int j = 0; j<N; j++)  
 			while ((j != i && (gate[j] >= k) && (last[k] = i))  
-			{}; 
+			{};   
 	number[i]++;    
 	if (number[i] <= l) return;  
 
