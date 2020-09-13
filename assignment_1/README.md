@@ -38,7 +38,7 @@ for (int i = 1; i < N; i++)
 			while ((j != i && (gate[j] >= k) && (last[k] = i))  
 			{};   
 	number[i]++;    
-	if (number[i] <= l) return;  
+	if (number[i] <= l) return;    
 
 exit protocol  gate[i] = 0;  
                number[i] = 0;  
