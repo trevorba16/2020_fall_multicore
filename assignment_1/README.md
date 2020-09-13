@@ -30,15 +30,15 @@ int [] number;
 entry protocol for  thread i, loop over the threads  
 
 for (int i = 1; i < N; i++)  
-   number[i]=0;  
-   for (int k = 1; k < N; k++)  
-      gate[i]= k;  
-      last[k]= i;  
-      for (int j = 0; j<N; j++)  
-         while ((j != i && (gate[j] >= k) && (last[k] = i))  
-         {};  
-   number[i]++    
-   if (number[i] <= l) return;  
+	number[i]=0;  
+	for (int k = 1; k < N; k++)  
+		gate[i]= k;  
+		last[k]= i;  
+		for (int j = 0; j<N; j++)  
+			while ((j != i && (gate[j] >= k) && (last[k] = i))  
+			{}; 
+	number[i]++;    
+	if (number[i] <= l) return;  
 
 exit protocol  gate[i] = 0;  
                number[i] = 0;  
