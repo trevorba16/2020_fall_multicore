@@ -18,3 +18,45 @@ Problem 1
 Problem 2
 
 
+(a)
+- Say P0 sets wantCS[0] = true, then P1 sets wantCS[1] = true
+- P0 sets turn = 0
+- P0 now evaluates (wantCS[1] && turn == 1), which evaluates to false, so P0 enters the critical section
+- P1 now sets turn = 1
+- P1 now evaluates (wantCS[0] && turn == 0), which evaluates to false, so P1 enters the critical section
+- Both processes are now in critical section, algorithm no longer guarantees safety
+
+(b)
+- P0 sets turn = 1
+- P1 sets turn = 0
+- P1 now sets wantCS[1] = true
+- P1 evaluates (wantCS[0] && turn == 0) which evaluates to false, so it enters critical section
+- P0 now sets wantCS[0] = true
+- P0 evaluates (wantCS[1] && turn == 1) which evaluates to false, so it enters critical section as well
+- Both processes are now in critical section, algorithm no longer guarantees safety
+
+Problem 3: l-exclusion problem
+
+Modifed filter algorithm:
+
+int N;  
+int l; // l<N  
+int [] gate;  
+int [] last;  
+int [] number;  
+
+entry protocol for  thread i, loop over the threads  
+
+for (int i = 1; i < N; i++)  
+	number[i]=0;  
+	for (int k = 1; k < N; k++)  
+		gate[i]= k;  
+		last[k]= i;  
+		for (int j = 0; j<N; j++)  
+			while ((j != i && (gate[j] >= k) && (last[k] = i))  
+			{};   
+	number[i]++;    
+	if (number[i] <= l) return;    
+
+exit protocol  gate[i] = 0; 
+               number[i] = 0;
