@@ -40,7 +40,7 @@ for (int i = 1; i < N; i++)
 	number[i]++;    
 	if (number[i] <= l) return;    
 
-exit protocol  gate[i] = 0;  
+exit protocol  gate[i] = 0; 
                number[i] = 0;
 
 
