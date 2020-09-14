@@ -17,6 +17,33 @@ Problem 1
 
 Problem 2
 
+Problem 3: l-exclusion problem
+
+Modifed filter algorithm:
+
+int N;  
+int l; // l<N  
+int [] gate;  
+int [] last;  
+int [] number;  
+
+entry protocol for  thread i, loop over the threads  
+
+for (int i = 1; i < N; i++)  
+	number[i]=0;  
+	for (int k = 1; k < N; k++)  
+		gate[i]= k;  
+		last[k]= i;  
+		for (int j = 0; j<N; j++)  
+			while ((j != i && (gate[j] >= k) && (last[k] = i))  
+			{};   
+	number[i]++;    
+	if (number[i] <= l) return;    
+
+exit protocol  gate[i] = 0; 
+               number[i] = 0;
+
+
 
 (a)
 - Say P0 sets wantCS[0] = true, then P1 sets wantCS[1] = true
