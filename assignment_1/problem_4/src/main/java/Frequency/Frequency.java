@@ -122,10 +122,10 @@ class FrequencyThread implements Callable<Integer>
         // bounding the possible values to 500 ensures a decent density of values
         for (int i = 0; i < arrayCount; i++)
         {
-            A[i] = Math.abs(random.nextInt(500));
+            A[i] = Math.abs(random.nextInt(50000));
         }
 
-        int x = random.nextInt(500);
+        int x = random.nextInt(50000);
 
         // Ensures number of threads greater than 2, less than 9
         int numThreads = Math.abs(random.nextInt(9) + 2);
