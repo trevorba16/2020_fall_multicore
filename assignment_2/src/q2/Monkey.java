@@ -24,6 +24,7 @@ public class Monkey {
 		
 		monitorLock.lock();
 		try {
+			// If there are  
 			while (monkeysOnRope == max_monkeys || (monkeysOnRope > 0 && currentDirection != direction))
 			{
 				if (direction == -1) {
@@ -62,7 +63,6 @@ public class Monkey {
 				waitingKong.signal();
 			}
 			else {
-				
 				if (currentDirection == -1)
 				{
 					if (r.nextBoolean()) {
