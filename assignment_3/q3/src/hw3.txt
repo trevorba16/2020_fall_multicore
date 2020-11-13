@@ -1,0 +1,36 @@
+# Problem 1
+H1
+    a) No, this is not sequentially consistent, because process P2 performs write(x,1) BEFORE read(x) returns 2.
+    b) No, since it is not sequentially consistent it cannot be linearizable
+
+H2
+    a) Yes, it is sequentially consistent as all processes are legal
+
+    b) Yes, can be linearized in such a way ->
+        P3[write(x,2)] -> P2[write(x,1)] -> P1[read(x) returns 1] -> P2[read(x) returns 1]
+
+H3
+    a) Yes, it is sequentially consistent as all processes are legal
+
+    b) No, not linearizable because P3[write(x,2)] will always be invoked and completed between
+       between P2[write(x,1)] and P2(read(x) returns 1)
+       
+# Problem 2
+
+    a) Yes, this is possible, shown in the following execution
+    P1          P2          P3
+                b:=1
+                print(a)
+                            c:=1
+    a:=1
+    print(b)
+    print(c)
+                print(c)
+                            print(a)
+                            print(b)
+
+    b) No, this is not sequentially consistent. For P3 to print 01 the print(a) 
+        call must precede the a:=1 statement in P1, but for P1 to print 00 the 
+        print(c) statement must precede the c:=1 statement in P3. Thus there is
+        a loop created in the order in which each must be executed.
+    
