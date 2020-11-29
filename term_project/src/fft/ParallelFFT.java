@@ -9,8 +9,6 @@ import java.util.Objects;
 
 import javax.swing.JFrame;
 
-import org.math.plot.Plot2DPanel;
-
 
 public class ParallelFFT {
 
@@ -111,7 +109,12 @@ public class ParallelFFT {
                 }
             }
             executor.shutdown();
-            while (!executor.isTerminated()) {   }  
+            while (!executor.isTerminated()) { try {
+				Thread.sleep(5);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}  }  
     	}
     }
     
@@ -142,54 +145,40 @@ public class ParallelFFT {
     }
     
     static void fft_recursive_parallel(Complex[] buffer) {
+    	int numThreads = 8;
     	ExecutorService threadPool = Executors.newCachedThreadPool();
     	
-    	Complex[][] allResults = new Complex[4][];
+    	Complex[][] allResults = new Complex[numThreads][];
     	List<Future<Complex[]>> resultList = new ArrayList<Future<Complex[]>>();
     	
     	try {
-    		Complex[] buffer_0 = new Complex[buffer.length / 4];
-    		Complex[] buffer_1 = new Complex[buffer.length / 4];
-    		Complex[] buffer_2 = new Complex[buffer.length / 4];
-    		Complex[] buffer_3 = new Complex[buffer.length / 4];
+    		Complex[][] subArrays = new Complex[numThreads][];
     		
-    		for (int i = 0; i < buffer.length / 4; i++) {
-    			int idx = i * 4;
-    			buffer_0[i] = buffer[idx];
-    			buffer_1[i] = buffer[idx + 1];
-    			buffer_2[i] = buffer[idx + 2];
-    			buffer_3[i] = buffer[idx + 3];
+    		for (int i = 0; i < numThreads; i++) {
+    			subArrays[i] = new Complex[buffer.length / numThreads]; 
     		}
-	    	resultList.add(threadPool.submit(new CalcThreadRecursive(buffer_0)));
-	    	resultList.add(threadPool.submit(new CalcThreadRecursive(buffer_1)));
-	    	resultList.add(threadPool.submit(new CalcThreadRecursive(buffer_2)));
-	    	resultList.add(threadPool.submit(new CalcThreadRecursive(buffer_3)));
+    		
+    		for (int i = 0; i < buffer.length / numThreads; i++) {
+    			int idx = i * numThreads;
+    			for (int j = 0; j < numThreads; j++) {
+    				subArrays[j][i] = buffer[idx + j]; 
+    			}
+    		}
+    		
+    		for (int i = 0; i < numThreads; i++) {
+    			resultList.add(threadPool.submit(new CalcThreadRecursive(subArrays[i])));
+    		}
 	    	
-	    	for (int i = 0; i < 4; i++)
+	    	for (int i = 0; i < numThreads; i++)
 	        {
 	    		allResults[i] = resultList.get(i).get();
 	        }
-	    	int n = buffer.length / 2;
-	    	Complex[] a = new Complex[n];
-	    	Complex[] b = new Complex[n];
-	        for (int k = 0; k < n/2; k++) {
-	            double kth = -2 * k * Math.PI / n;
-	            Complex wk = new Complex(Math.cos(kth), Math.sin(kth));
-	            a[k]       = allResults[0][k].plus (wk.times(allResults[2][k]));
-	            a[k + n/2] = allResults[0][k].minus(wk.times(allResults[2][k]));
-
-	            b[k]       = allResults[1][k].plus (wk.times(allResults[3][k]));
-	            b[k + n/2] = allResults[1][k].minus(wk.times(allResults[3][k]));
-	        }
-	        
-	        n = buffer.length;
-	        for (int k = 0; k < n/2; k++) {
-	            double kth = -2 * k * Math.PI / n;
-	            Complex wk = new Complex(Math.cos(kth), Math.sin(kth));
-	            buffer[k]       = a[k].plus (wk.times(b[k]));
-	            buffer[k + n/2] = a[k].minus(wk.times(b[k]));
-	        }
-    	
+	    	
+	    	Complex[][] result = ParallelCombination.Combine(allResults, numThreads);
+	    	
+	    	while (result.length != 1) {
+	    		result = ParallelCombination.Combine(result, numThreads);
+	    	}
     	
     	} catch (Exception e)
         {
@@ -199,59 +188,60 @@ public class ParallelFFT {
     }
     
     public static void main(String[] args) { 
-//    	System.out.println("Iterative");
-//    	for (int power = 2; power < 32; power++) {
-//    		long timeSum = 0;
-//    		int array_size = (int)Math.pow(2, power);
-//    		for (int i = 0; i<10; i++) {
-//    			Complex[] x = generateSignal(array_size);
-//	    		long startTime = System.currentTimeMillis();
-//	    		fft_iterative(x);
-//	            long executionTime = System.currentTimeMillis() - startTime;
-//	            timeSum += executionTime;
-//    		}
-//    		long timeAvg = timeSum / 10;
-//            System.out.println(array_size + "," + timeAvg);
-//    	}
-    	System.out.println("Iterative in parallel");
-    	for (int power = 3; power < 32; power++) {
+    	System.out.println("Iterative in Series");
+    	for (int power = 0; power < 27; power++) {
     		long timeSum = 0;
     		int array_size = (int)Math.pow(2, power);
-    		for (int i = 0; i<10; i++) {
+    		for (int i = 0; i<3; i++) {
+    			Complex[] x = generateSignal(array_size);
+	    		long startTime = System.currentTimeMillis();
+	    		fft_iterative(x);
+	            long executionTime = System.currentTimeMillis() - startTime;
+	            timeSum += executionTime;
+    		}
+    		long timeAvg = timeSum / 3;
+            System.out.println(array_size + "," + timeAvg);
+    	}
+    	System.out.println("Iterative in parallel");
+    	for (int power = 3; power < 27; power++) {
+    		long timeSum = 0;
+    		int array_size = (int)Math.pow(2, power);
+    		for (int i = 0; i<3; i++) {
     			Complex[] x = generateSignal(array_size);
 	    		long startTime = System.currentTimeMillis();
 	    		fft_iterative_parallel(x, 4);
 	            long executionTime = System.currentTimeMillis() - startTime;
 	            timeSum += executionTime;
     		}
-    		long timeAvg = timeSum / 10;
+    		long timeAvg = timeSum / 3;//  / 5;
             System.out.println(array_size + "," + timeAvg);
     	}
-//    	for (int power = 2; power < 32; power++) {
-//    		long timeSum = 0;
-//    		int array_size = (int)Math.pow(2, power);
-//    		for (int i = 0; i<10; i++) {
-//    			Complex[] x = generateSignal(array_size);
-//	    		long startTime = System.currentTimeMillis();
-//	    		fft_recursive(x);
-//	            long executionTime = System.currentTimeMillis() - startTime;
-//	            timeSum += executionTime;
-//    		}
-//    		long timeAvg = timeSum / 10;
-//            System.out.println(array_size + "," + timeAvg);
-//    	}
-    	System.out.println("Recursive in Parallel");
-    	for (int power = 2; power < 32; power++) {
+    	System.out.println("Recursive in Series");
+    	for (int power = 2; power < 27; power++) {
     		long timeSum = 0;
     		int array_size = (int)Math.pow(2, power);
-    		for (int i = 0; i<10; i++) {
+    		for (int i = 0; i<3; i++) {
+    			Complex[] x = generateSignal(array_size);
+	    		long startTime = System.currentTimeMillis();
+	    		fft_recursive(x);
+	            long executionTime = System.currentTimeMillis() - startTime;
+	            timeSum += executionTime;
+    		}
+    		long timeAvg = timeSum / 3;
+            System.out.println(array_size + "," + timeAvg);
+    	}
+    	System.out.println("Recursive in Parallel");
+    	for (int power = 2; power < 27; power++) {
+    		long timeSum = 0;
+    		int array_size = (int)Math.pow(2, power);
+    		for (int i = 0; i<3; i++) {
     			Complex[] x = generateSignal(array_size);
 	    		long startTime = System.currentTimeMillis();
 	    		fft_recursive_parallel(x);
 	            long executionTime = System.currentTimeMillis() - startTime;
 	            timeSum += executionTime;
     		}
-    		long timeAvg = timeSum / 10;
+    		long timeAvg = timeSum / 3;// / 10;
             System.out.println(array_size + "," + timeAvg);
     	}
     }

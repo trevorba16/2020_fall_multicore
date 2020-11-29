@@ -29,6 +29,7 @@ public class CalcThreadRecursive implements Callable<Complex[]> {
             even[k] = x[2*k];
             odd[k] = x[2*k + 1];
         }
+        
         Complex[] evenFFT = recursive_fft_segment(even);
         Complex[] oddFFT = recursive_fft_segment(odd);
         // combine
@@ -40,7 +41,8 @@ public class CalcThreadRecursive implements Callable<Complex[]> {
             y[k + n/2] = evenFFT[k].minus(wk.times(oddFFT[k]));
         }
         return y;
-    }
+        
+	}
 
 
 }
